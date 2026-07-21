@@ -6,6 +6,7 @@ class ForoApi {
   final int id; // identificador único del foro
   final String titulo; // nombre del foro
   final String descripcion; // texto que describe de qué trata
+  final String tipo; // "foro" (normal) o "denuncia" (reporte de basura)
   final String autorNombre; // nombre de quien lo creó
   final DateTime createdAt; // fecha en que se creó
 
@@ -14,9 +15,13 @@ class ForoApi {
     required this.id,
     required this.titulo,
     required this.descripcion,
+    required this.tipo,
     required this.autorNombre,
     required this.createdAt,
   });
+
+  // Getter cómodo: true si este tema es una denuncia.
+  bool get esDenuncia => tipo == 'denuncia';
 
   // Fábrica: construye un ForoApi a partir del mapa JSON del backend.
   factory ForoApi.fromJson(Map<String, dynamic> j) {
@@ -24,6 +29,8 @@ class ForoApi {
       id: j['id'],
       titulo: j['titulo'] ?? '',
       descripcion: j['descripcion'] ?? '',
+      // Si el backend no manda tipo (temas viejos), asumimos "foro".
+      tipo: j['tipo'] ?? 'foro',
       autorNombre: j['autor_nombre'] ?? '',
       // Convertimos el texto ISO a fecha y la pasamos a hora local del celular.
       createdAt: DateTime.parse(j['created_at']).toLocal(),
